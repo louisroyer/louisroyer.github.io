@@ -2,8 +2,7 @@ source "https://rubygems.org"
 
 gem "jekyll", "3.8.4"
 
-#gem "minima", 'HEAD' git: 'https://github.com/jekyll/minima', branch: "master", ref: "HEAD"
-gem "minima", :github => 'jekyll/minima', :ref => 'd4bfaf2'
+gem "minima", "~> 2.5", git: 'https://github.com/jekyll/minima', branch: "master", ref: "HEAD"
 
 group :jekyll_plugins do
    gem "jekyll-feed", "~> 0.9"
