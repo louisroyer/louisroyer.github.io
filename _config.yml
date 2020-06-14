@@ -1,23 +1,29 @@
-title: Louis Royer’s blog
-author:
-  name: Louis Royer
-  email: 55180044+louisroyer@users.noreply.github.com
+title: "Louis Royer’s blog"
+
+# minima 2.x
+author: "Louis Royer"
+email: "55180044+louisroyer@users.noreply.github.com"
+rss: "rss"
+# minima 3.x
+#author:
+#  name: "Louis Royer"
+#  email: "55180044+louisroyer@users.noreply.github.com"
+
 description: >
   Personal blog
 
 show_excerpts: true
-header_pages:
-  - categories.md
-  - feed.rss
 
 baseurl: ""
 url: "https://louisroyer.github.io"
-github_username: louisroyer
-
-markdown: kramdown
-theme: minima
-plugins:
-  - jekyll-feed
+github_username: "louisroyer"
 
 minima:
   date_format: "%Y-%m-%d"
+
+header_pages:
+  - "categories.md"
+
+theme: "minima"
+plugins:
+  - "jekyll-feed"
