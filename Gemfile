@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem "jekyll", "3.8.4"
 
-gem "minima", "~> 2.5.1"
+gem "minima", git: 'https://github.com/jekyll/minima'
 
 group :jekyll_plugins do
    gem "jekyll-feed", "~> 0.9"
