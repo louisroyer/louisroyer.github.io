@@ -1,0 +1,12 @@
+title: Louis Royer’s blog
+email: 55180044+louisroyer@users.noreply.github.com
+description: >
+  Personal blog
+baseurl: ""
+url: "https://louisroyer.github.io"
+github_username: louisroyer
+
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
