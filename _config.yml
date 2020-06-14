@@ -13,6 +13,8 @@ rss: "rss"
 description: >
   Personal blog
 
+copyright: "CC-0 1.0"
+
 show_excerpts: true
 
 baseurl: ""
