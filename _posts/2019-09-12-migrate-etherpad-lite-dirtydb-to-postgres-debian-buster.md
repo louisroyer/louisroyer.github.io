@@ -1,7 +1,11 @@
 ---
 layout: post
 title: How to migrate etherpad-lite dirty.db to postgres on debian 10 (buster)
-categories: tutorial
+category: tutorial
+tags:
+  - debian
+  - etherpad-lite
+  - postgres
 ---
 
 The first part of this tutorial comes from [etherpad-lite](https://github.com/ether/etherpad-lite/wiki/How-to-use-Etherpad-Lite-with-PostgreSQL) wiki but the wiki content is outdated. Here is a recent version of the procedure, with some additions.
