@@ -28,6 +28,7 @@ First, let’s update my fork of `mtg`, create a new branch [`experimental_defau
 
 Here is how I procede:
 
+- find a name for the new mod (check on contentdb and on the forum the name is not already taken)
 - search if there is any reference to the mod in other files of `default`
 - move all related lua code, textures, sounds, etc. in an other repository
 - write a `mod.conf`, a `README.txt`, and license files
@@ -39,4 +40,23 @@ Here is how I procede:
 - move translations by copying all and running [update translation tool](https://github.com/minetest-tools/update_translations)
 - run luacheck again (I use vim syntastic with luacheck, but it is better to double-check)
 
-When all mods are created, it is time to play with depends to no longer have any mod that depends on `default`.
+When all mods are created, it is time to play with depends to no longer have any mod that depends on `default`. Then it is possible to run `mtg` to ensure test everything.
+
+Result of the split:
+- `mtg_gui`:
+    - contains gui related functions
+- `default_lib`:
+    - contains helper functions from `default`
+- `chests`:
+    - depends on `mtg_gui`, `woods` (for the sound), `default_lib`, and  optionally on `ores` (then locked chests can be crafted)
+    - locked chests can be disabled by settings
+    - [`basic_materials`](https://gitlab.com/VanessaE/basic_materials) in optional depends and if loaded, then the craft use padlock instead of steel, this can be disabled by settings
+- `ores`
+- `trees`
+- `woods`
+- `ladders`
+- `fences`
+- `signs`
+
+
+Since the goal of this experiment is to make `mtg` more modular, I added new settings to allow disabling easily parts of some mods and I made some mods depends optional.
