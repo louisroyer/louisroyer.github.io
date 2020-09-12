@@ -6,6 +6,7 @@ gem "minima", "~> 2.5", git: 'https://github.com/jekyll/minima', branch: "master
 
 group :jekyll_plugins do
    gem "jekyll-feed", "~> 0.9"
+   gem "jekyll-sitemap", "~> 1.4.0"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
