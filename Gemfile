@@ -5,7 +5,7 @@ gem "jekyll", "3.8.4"
 gem "minima", "~> 2.5", git: 'https://github.com/jekyll/minima', branch: "master", ref: "HEAD"
 
 group :jekyll_plugins do
-   gem "jekyll-feed", "~> 0.9"
+   gem "jekyll-feed", "~> 0.15.0"
    gem "jekyll-sitemap", "~> 1.4.0"
 end
 
