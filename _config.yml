@@ -1,14 +1,8 @@
 title: "Louis Royer’s blog"
 
-# minima 2.x
-author: "Louis Royer"
-rss: "rss"
-#email: "55180044+louisroyer@users.noreply.github.com" # removed because it render over rss link
-
-# minima 3.x
-#author:
-#  name: "Louis Royer"
-#  email: "55180044+louisroyer@users.noreply.github.com"
+author:
+  name: "Louis Royer"
+  email: "infos.louis.royer@gmail.com"
 
 description: >
   Personal blog
@@ -28,10 +22,12 @@ minima:
 header_pages:
   - "categories.md"
 
-theme: "minima"
 plugins:
   - "jekyll-feed"
   - "jekyll-sitemap"
+  - "jekyll-remote-theme"
+
+remote_theme: "jekyll/minima"
 
 feed:
   categories:
