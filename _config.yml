@@ -1,34 +1,23 @@
 title: "Louis Royer’s blog"
+copyright: "CC-0 1.0"
+show_excerpts: true
+url: "https://louisroyer.github.io"
+description: >
+  Personal blog
 
 author:
   name: "Louis Royer"
   email: "infos.louis.royer@gmail.com"
-
-description: >
-  Personal blog
-
-copyright: "CC-0 1.0"
-
-show_excerpts: true
-
-baseurl: ""
-url: "https://louisroyer.github.io"
-github_username: "louisroyer"
-
 minima:
   date_format: "%Y-%m-%d"
-
-# minima 3.x
-header_pages:
-  - "categories.md"
-
+  social_links:
+    github: "louisroyer"
+feed:
+  categories:
+    - tutorial
 plugins:
   - "jekyll-feed"
   - "jekyll-sitemap"
   - "jekyll-remote-theme"
-
 remote_theme: "jekyll/minima"
 
-feed:
-  categories:
-    - tutorial
