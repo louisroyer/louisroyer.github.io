@@ -491,6 +491,7 @@ For example, here is the content of this file on `R1` (and `R1-debug`), where we
 	```
 
 We can also modify this file manually:
+
 	``` terminal
 	$ docker exec -it R3 bash -c "echo nameserver 192.0.2.53 > /etc/resolv.conf"
 	$ docker exec -it R3-debug cat /etc/resolv.conf
