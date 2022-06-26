@@ -519,3 +519,5 @@ You can run this kind of script by adding an `entrypoint` option in `docker-comp
 I hope this tutorial will help you with your usage of Docker Compose.
 Docker Compose is a great tool for network engineering,
 even if it might be difficult to use the first times.
+
+Code used in this blog article is available on Github with the repository [louisroyer/blog-docker-compose-for-network-simulations](https://github.com/louisroyer/blog-docker-compose-for-network-simulations).
