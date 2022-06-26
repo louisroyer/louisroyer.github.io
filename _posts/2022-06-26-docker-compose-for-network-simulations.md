@@ -36,7 +36,7 @@ I will show in this tutorial how to use debug tools from another image created s
 
 Lets create some images for demonstration purpose:
 
-	~~~ Docker
+	``` Docker
 	FROM debian:bullseye-slim as router
 	RUN  apt-get update -q && DEBIAN_FRONTEND=non-interactive apt-get install -qy iproute2 && rm -rf /var/lib/apt/lists/*
 	COPY entrypoint.sh /usr/local/sbin/entrypoint.sh
@@ -52,7 +52,7 @@ Lets create some images for demonstration purpose:
 	RUN  apt-get update -q && DEBIAN_FRONTEND=non-interactive apt-get install -qy iperf3 iputils-ping iproute2 tshark && rm -rf /var/lib/apt/lists/*
 	ENTRYPOINT ["sleep"]
 	CMD ["infinity"]
-	~~~
+	```
 
 The first image `router` will contains only the `iproute2` package.
 In a real simulation, it could contains a specific software that will use `iproute2`, `iptables`,
@@ -61,7 +61,7 @@ The second image `router-debug` contains various tools for testing your network 
 
 The file `entrypoint.sh` copied in `router` image is an executable file containing the following:
 
-	~~~ bash
+	``` bash
 	#!/usr/bin/env bash
 	set -e
 	if [ "$1" == "--help" ]; then
@@ -96,7 +96,7 @@ The file `entrypoint.sh` copied in `router` image is an executable file containi
 		exec sleep infinity
 	fi
 	exit 1
-	~~~
+	```
 
 
 
@@ -106,7 +106,7 @@ For this demonstration, I will define the following setup: three containers `R1`
 
 Lets create a `docker-compose.yaml` file:
 
-	~~~ yaml
+	``` yaml
 	# Debug containers template
 	x-router-debug: &router-debug
 	  restart: always
@@ -241,14 +241,14 @@ Lets create a `docker-compose.yaml` file:
 	        - subnet: fd83:b442:5c7e::/80
 	          ip_range: fd83:b442:5c7e::/81
 	          gateway: fd83:b442:5c7e::8000:0:1
-	~~~
+	```
 
 Now, we can run `docker compose --profile debug build` to build images (if you host images on DockerHub, you can run `docker compose --profile debug pull` instead).
 The option `--profile debug` allows us to build images associated to the `debug` profile in addition to the `default` one.
 
 We can then launch Docker Compose:
 
-	~~~ terminal
+	``` terminal
 	$ docker compose up -d
 	[+] Running 5/5
 	 ⠿ Network s2    Created 0.1s
@@ -325,22 +325,22 @@ We can then launch Docker Compose:
 	R1  |        valid_lft forever preferred_lft forever
 	R1  |     inet6 fe80::42:aff:fe00:6401/64 scope link tentative
 	R1  |        valid_lft forever preferred_lft forever
-~~~
+	```
 
 To test our routing is right, lets start `R2-debug` and `R3-debug`:
 
-	~~~ terminal
+	``` terminal
 	$ docker compose up -d R2-debug R3-debug
 	[+] Running 2/2
 	 ⠿ Container R3        Running 0.0s
 	 ⠿ Container R3-debug  Started 0.4s
 	 ⠿ Container R2        Running 0.0s
 	 ⠿ Container R2-debug  Started 0.4s
-	~~~
+	```
 
 So, we will start `tshark` on `R2`, and run a `ping` between `R3` and `R1`:
 
-	~~~ terminal
+	``` terminal
 	$ docker exec -it R3-debug ping fd32:f7ff:393f::1 -c 1
 	PING fd32:f7ff:393f::1(fd32:f7ff:393f::1) 56 data bytes
 	64 bytes from fd32:f7ff:393f::1: icmp_seq=1 ttl=63 time=0.083 ms
@@ -348,13 +348,13 @@ So, we will start `tshark` on `R2`, and run a `ping` between `R3` and `R1`:
 	--- fd32:f7ff:393f::1 ping statistics ---
 	1 packets transmitted, 1 received, 0% packet loss, time 0ms
 	rtt min/avg/max/mdev = 0.083/0.083/0.083/0.000 ms
-	~~~
+	```
 
 Be sure to not forget the `-it` in `docker exec` command, or you won't be able to kill it using `^C`
 and might start multiple `tshark` instances (then you will have strange capture behaviours).
 To avoid that, you can also run `tshark` from the host using `tshark -i br-s1 -i br-s2 -Y "icmpv6"`.
 
-	~~~ terminal
+	``` terminal
 	$ docker exec -it R2-debug tshark -i s1-0 -i s2-0 -Y "icmpv6"
 	Running as user "root" and group "root". This could be dangerous.
 	Capturing on 's1-0' and 's2-0'
@@ -362,21 +362,21 @@ To avoid that, you can also run `tshark` from the host using `tshark -i br-s1 -i
 	    2 0.000023245 fd32:f7ff:393f::1 ? fd83:b442:5c7e::1 ICMPv6 118 Echo (ping) reply id=0x0043, seq=1, hop limit=64 (request in 1)
 	    3 -0.000008826 fd83:b442:5c7e::1 ? fd32:f7ff:393f::1 ICMPv6 118 Echo (ping) request id=0x0043, seq=1, hop limit=64
 	    4 0.000026059 fd32:f7ff:393f::1 ? fd83:b442:5c7e::1 ICMPv6 118 Echo (ping) reply id=0x0043, seq=1, hop limit=63 (request in 3)
-	~~~
+	```
 
 We can see our routes are used because the `R3-debug` container is using the same network stack than `R3`.
 Note: packets are not displayed in the right order, but using timestamps we can reorder as follow:
 
-	~~~ text
+	``` text
 	    3 -0.000008826 fd83:b442:5c7e::1 ? fd32:f7ff:393f::1 ICMPv6 118 Echo (ping) request id=0x0043, seq=1, hop limit=64
 	    1 0.000000000 fd83:b442:5c7e::1 ? fd32:f7ff:393f::1 ICMPv6 118 Echo (ping) request id=0x0043, seq=1, hop limit=63
 	    2 0.000023245 fd32:f7ff:393f::1 ? fd83:b442:5c7e::1 ICMPv6 118 Echo (ping) reply id=0x0043, seq=1, hop limit=64 (request in 1)
 	    4 0.000026059 fd32:f7ff:393f::1 ? fd83:b442:5c7e::1 ICMPv6 118 Echo (ping) reply id=0x0043, seq=1, hop limit=63 (request in 3)
-	~~~
+	```
 
 We can also run `iperf3`:
 
-	~~~ terminal
+	``` terminal
 	$ docker up R1-debug -d
 	[+] Running 2/2
 	 ⠿ Container R1        Running 0.0s
@@ -406,9 +406,9 @@ We can also run `iperf3`:
 	Server listening on 5201
 	-----------------------------------------------------------
 	^Ciperf3: interrupt - the server has terminated
-	~~~
+	```
 
-	~~~ terminal
+	``` terminal
 	$ docker -it exec R3-debug iperf3 -c fd32:f7ff:393f::1
 	Connecting to host fd32:f7ff:393f::1, port 5201
 	[  5] local fd83:b442:5c7e::1 port 46732 connected to fd32:f7ff:393f::1 port 5201
@@ -429,10 +429,11 @@ We can also run `iperf3`:
 	[  5]   0.00-10.00  sec  33.8 GBytes  29.1 Gbits/sec                  receiver
 
 	iperf Done.
-	~~~
+	```
 
 For comparison, here is the output of the same test on the same machine but without using Docker:
-	~~~ terminal
+
+	``` terminal
 	$ iperf3 -c localhost
 	Connecting to host localhost, port 5201
 	[  5] local ::1 port 58788 connected to ::1 port 5201
@@ -453,7 +454,7 @@ For comparison, here is the output of the same test on the same machine but with
 	[  5]   0.00-10.00  sec  58.1 GBytes  49.9 Gbits/sec                  receiver
 
 	iperf Done.
-	~~~
+	```
 
 The bitrate is divided by two with the Docker architecture because we are using a router `R2` with two interfaces.
 When the client send 1 packet, there are 2 packets for the host to handle (1 on each virtual bridge).
@@ -467,13 +468,13 @@ This obviously include network interfaces and routing tables, but it also includ
 
 By default, Docker Compose will populate this file with the following:
 
-	~~~ terminal
+	``` terminal
 	$ docker exec -it R2 cat /etc/resolv.conf
 	nameserver 127.0.0.11
 	nameserver 2001:4860:4860::8888
 	nameserver 2001:4860:4860::8844
 	options edns0 trust-ad ndots:0
-	~~~
+	```
 
 The IPv4 nameserver is a local resolver, managed by Docker,
 that will resolve names using nameserver configured in host `/etc/resolv.conf`,
@@ -482,19 +483,19 @@ IPv6 nameservers are Google nameservers by default. Specifing a `dns` option in 
 
 For example, here is the content of this file on `R1` (and `R1-debug`), where we have configured `dns` in `docker-compose.yaml`:
 
-	~~~ terminal
+	``` terminal
 	$ docker exec -it R1 cat /etc/resolv.conf
 	nameserver 127.0.0.11
 	nameserver 2001:db8::1
 	options edns0 trust-ad ndots:0
-	~~~
+	```
 
 We can also modify this file manually:
-	~~~ terminal
+	``` terminal
 	$ docker exec -it R3 bash -c "echo nameserver 192.0.2.53 > /etc/resolv.conf"
 	$ docker exec -it R3-debug cat /etc/resolv.conf
 	nameserver 192.0.2.53
-	~~~
+	```
 
 The file is shared with `R3-debug`, even when modified at runtime.
 
@@ -508,4 +509,6 @@ It is possible to mount in a volume a script which will edit MAC address using `
 You can run this kind of script by adding an `entrypoint` option in `docker-compose.yaml`.
 
 ## Conclusion
-I hope this tutorial will help you with your usage of Docker Compose. Docker Compose is a great tool
+I hope this tutorial will help you with your usage of Docker Compose.
+Docker Compose is a great tool for network engineering,
+even if it might be difficult to use the first times.
