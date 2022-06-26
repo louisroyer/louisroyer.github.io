@@ -14,7 +14,7 @@ There are 2 main versions of Docker Compose:
 - Docker Compose v1, written in Python
 - Docker Compose v2, written in Go
 
-The Go version is farly better than the Python, at least for network engineering.
+The Go version is farly better than the Python one, at least for network engineering.
 It allows to specify usefull [options](https://github.com/compose-spec/compose-spec/blob/master/spec.md) in `docker-compose.yaml`,
 like `dns`, `healthcheck` and `profiles`. Additionnaly, this version is packaged for debian.
 
@@ -45,12 +45,12 @@ Lets create some images for demonstration purpose:
 FROM debian:bullseye-slim as router
 RUN  apt-get update -q && DEBIAN_FRONTEND=non-interactive apt-get install -qy iproute2 && rm -rf /var/lib/apt/lists/*
 COPY entrypoint.sh /usr/local/sbin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
 ENV VOL_FILE=""
 ENV ROUTE6_NET=""
 ENV ROUTE6_GW=""
 ENV ROUTE4_NET=""
 ENV ROUTE4_GW=""
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["--help"]
 
 FROM debian:bullseye-slim as router-debug
@@ -281,12 +281,12 @@ R3  |        valid_lft forever preferred_lft forever
 R1  | FROM debian:bullseye-slim as router
 R1  | RUN  apt-get update -q && DEBIAN_FRONTEND=non-interactive apt-get install -qy iproute2 && rm -rf /var/lib/apt/lists/*
 R1  | COPY entrypoint.sh /usr/local/sbin/entrypoint.sh
-R1  | ENTRYPOINT ["entrypoint.sh"]
 R1  | ENV VOL_FILE=""
 R1  | ENV ROUTE6_NET=""
 R1  | ENV ROUTE6_GW=""
 R1  | ENV ROUTE4_NET=""
 R1  | ENV ROUTE4_GW=""
+R1  | ENTRYPOINT ["entrypoint.sh"]
 R1  | CMD ["--help"]
 R1  |
 R1  | FROM debian:bullseye-slim as router-debug
@@ -333,7 +333,7 @@ R1  |     inet6 fe80::42:aff:fe00:6401/64 scope link tentative
 R1  |        valid_lft forever preferred_lft forever
 ```
 
-our routing is right, lets start `R2-debug` and `R3-debug`:
+To test our routing is right, lets start `R2-debug` and `R3-debug`:
 
 ``` terminal
 $ docker compose up -d R2-debug R3-debug
@@ -464,7 +464,7 @@ iperf Done.
 
 The bitrate is divided by two with the Docker architecture because we are using a router `R2` with two interfaces.
 When the client send 1 packet, there are 2 packets for the host to handle (1 on each virtual bridge).
-When simulating networks with Docker, you can use this formula: `max_container_bitrate = max_host_bitrate / number_of_virtual_bridges_traversed`
+When simulating networks with Docker, you can use this formula: `max_container_bitrate = max_host_bitrate / number_of_virtual_bridges_traversed`.
 If your bitrate become to low because of the number of bridges traversed, a possible solution could be the use of Docker Swarm to deploy your
 architecture using multiple hosts, although I have not tested it yet.
 
