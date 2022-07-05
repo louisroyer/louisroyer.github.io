@@ -224,7 +224,7 @@ networks:
           # I will use it for R2 and for the host (gateway)
           # to be sure their IP addresses are available, even
           # if R1 and R3 are started first
-          ip_range: 10.0.200.0/25
+          ip_range: 10.0.100.0/25
           gateway: 10.0.100.129
           # I use a /80 instead of a /48 for my ULA because
           # of this issue: https://github.com/moby/moby/issues/40275
