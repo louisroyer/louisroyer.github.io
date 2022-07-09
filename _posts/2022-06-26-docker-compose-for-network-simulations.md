@@ -462,11 +462,6 @@ Connecting to host localhost, port 5201
 iperf Done.
 ```
 
-The bitrate is divided by two with the Docker architecture because we are using a router `R2` with two interfaces.
-When the client send 1 packet, there are 2 packets for the host to handle (1 on each virtual bridge).
-When simulating networks with Docker, you can use this formula: `max_container_bitrate = max_host_bitrate / number_of_virtual_bridges_traversed`.
-If your bitrate become to low because of the number of bridges traversed, a possible solution could be the use of Docker Swarm to deploy your
-architecture using multiple hosts, although I have not tested it yet.
 
 ## Setting a DNS Resolver
 As we have already seen, network stack is shared when `network_mode:container` is used (`network_mode: service:R3` for example).
