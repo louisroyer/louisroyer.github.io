@@ -20,5 +20,5 @@ plugins:
   - "jekyll-feed"
   - "jekyll-sitemap"
   - "jekyll-remote-theme"
-remote_theme: "jekyll/minima"
+remote_theme: "jekyll/minima@7f4b79da7e72b0b564b769ffd2ee4809bb387f0c"
 
