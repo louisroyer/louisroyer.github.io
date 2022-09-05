@@ -9,6 +9,7 @@ author:
   name: "Louis Royer"
   email: "infos.louis.royer@gmail.com"
 minima:
+  skin: auto
   date_format: "%Y-%m-%d"
   social_links:
     github: "louisroyer"
