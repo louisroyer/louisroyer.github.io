@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: base
 ---
 <h1>Posts by category</h1>
 

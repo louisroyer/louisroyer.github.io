@@ -5,23 +5,24 @@ category: tutorial
 tags:
   - docker
   - networking
+lang: en
 ---
 
-I use [Docker Compose](https://github.com/docker/compose) to simulate mobile networks. Here is a tutorial about how to use this tool to simulate networks.
+I use [Docker Compose](https://github.com/docker/compose) to simulate mobile networks. Here is a tutorial on how to use this tool to simulate networks.
 
 ## Docker Compose version
-There are 2 main versions of Docker Compose:
+There are two main versions of Docker Compose:
 - Docker Compose v1, written in Python
 - Docker Compose v2, written in Go
 
 The Go version is farly better than the Python one, at least for network engineering.
 It allows to specify usefull [options](https://github.com/compose-spec/compose-spec/blob/master/spec.md) in `docker-compose.yaml`,
-like `dns`, `healthcheck` and `profiles`. Additionnaly, this version is packaged for debian.
+like `dns`, `healthcheck` and `profiles`. Additionnaly, this version is packaged for Debian.
 
 In this tutorial, I use the Go version (v2.6.0).
 
 ## Docker image creation
-To instanciate a container, you must have a Docker image.
+To instantiate a container, you must have a Docker image.
 It is a good practice to use only [Docker Official Images](https://hub.docker.com/search?image_filter=official),
 and images build by yourself (i.e. not using images you randomly found on DockerHub, since they may contain malwares).
 For network engineering purpose, I recommend to base your images on [debian:stable-slim](https://hub.docker.com/_/debian).
@@ -29,7 +30,7 @@ For network engineering purpose, I recommend to base your images on [debian:stab
 
 Personally, I create [Git repositories on Github](https://github.com/louisroyer-docker), and automate the creation of images with Github Actions once a week,
 so I can have an [up-to-date image ready in the DockerHub](https://hub.docker.com/u/louisroyer). 
-Of course, if you do this, make sure to not put secrets in your image (even if you delete them in the next layer).
+Of course, if you do this, make sure not to put secrets in your image (even if you delete them in the next layer).
 I create images that do just one specific thing, with only minimum packages installed and no debug tools.
 
 If possible I use debian packages (I build [some of them](https://github.com/louisroyer-deb) myself),
@@ -38,7 +39,7 @@ and import the binary using `COPY --from=builder …` to reduce the size of fina
 
 I will show in this tutorial how to use debug tools from another image created specifically for this.
 
-Lets create some images for demonstration purpose:
+Lets create some images for demonstration purposes:
 
 
 ``` Docker
@@ -60,12 +61,12 @@ CMD ["infinity"]
 ```
 
 
-The first image `router` will contains only the `iproute2` package.
-In a real simulation, it could contains a specific software that will use `iproute2`, `iptables`,
+The first image `router` will contain only the `iproute2` package.
+In a real simulation, it could contain a specific software that will use `iproute2`, `iptables`,
 and other network packages for example to create tunnels according to instructions given by the control plane.
 The second image `router-debug` contains various tools for testing your network behaviour.
 
-The file `entrypoint.sh` copied in `router` image is an executable file containing the following:
+The file `entrypoint.sh` copied into the `router` image is an executable file containing the following:
 
 ``` bash
 #!/usr/bin/env bash
@@ -110,7 +111,7 @@ exit 1
 For this demonstration, I will define the following setup: three containers `R1`, `R2`, and `R3`.
 `R1` and `R2` are connected on the same switch `S1`; `R2` and `R3` are connected on the same switch `S2`.
 
-Lets create a `docker-compose.yaml` file:
+Let’s create a `docker-compose.yaml` file:
 
 ``` yaml
 # Debug containers template
@@ -356,8 +357,8 @@ PING fd32:f7ff:393f::1(fd32:f7ff:393f::1) 56 data bytes
 rtt min/avg/max/mdev = 0.083/0.083/0.083/0.000 ms
 ```
 
-Be sure to not forget the `-it` in `docker exec` command, or you won't be able to kill it using `^C`
-and might start multiple `tshark` instances (then you will have strange capture behaviours).
+Be sure not to forget the `-it` option in `docker exec` command, or you won't be able to stop the process using `^C`
+and might start multiple `tshark` instances (then you will have strange capture behaviour).
 To avoid that, you can also run `tshark` from the host using `tshark -i br-s1 -i br-s2 -Y "icmpv6"`.
 
 ``` terminal
@@ -465,7 +466,7 @@ iperf Done.
 
 ## Setting a DNS Resolver
 As we have already seen, network stack is shared when `network_mode:container` is used (`network_mode: service:R3` for example).
-This obviously include network interfaces and routing tables, but it also includes some network related files like `/etc/resolv.conf`.
+This obviously includes network interfaces and routing tables, but it also includes some network-related files like `/etc/resolv.conf`.
 
 By default, Docker Compose will populate this file with the following:
 
@@ -477,10 +478,10 @@ nameserver 2001:4860:4860::8844
 options edns0 trust-ad ndots:0
 ```
 
-The IPv4 nameserver is a local resolver, managed by Docker,
-that will resolve names using nameserver configured in host `/etc/resolv.conf`,
-and if `dns` option is used in `docker-compose.yaml` with an IPv4, this value will be used for resolution.
-IPv6 nameservers are Google nameservers by default. Specifing a `dns` option in `docker-compose.yaml` will replace these lines.
+The IPv4 nameserver is a local resolver, managed by Docker.
+It will resolve names using the nameserver configured in the host’s `/etc/resolv.conf`.
+If `dns` option is set in `docker-compose.yaml` to an IPv4 address, that value will be used for resolution.
+IPv6 nameservers are Google nameservers by default. Specifying a `dns` option in `docker-compose.yaml` will replace these lines.
 
 For example, here is the content of this file on `R1` (and `R1-debug`), where we have configured `dns` in `docker-compose.yaml`:
 
@@ -502,12 +503,12 @@ nameserver 192.0.2.53
 The file is shared with `R3-debug`, even when modified at runtime.
 
 ## Modify container MAC addresses
-Sometimes you may want to change MAC addresses of a container.
-If you use `mac_address` in `docker-compose.yaml`, it is only possible to change it for the first interface
-(`priority` can be used to be sure this is always the same interface).
+Sometimes you may want to change a container’s MAC addresses.
+If you use `mac_address` in `docker-compose.yaml`, it is only possible to change the address of the first interface
+(`priority` can be used to ensure this is always the same interface).
 
-This configuration option become useless if you want to modify more than one MAC address on a container.
-It is possible to mount in a volume a script which will edit MAC address using `ip link set` then exec the original entrypoint.
+This configuration option becomes useless if you want to modify more than one MAC address on a container.
+It is possible to mount in a volume a script that will edit MAC address using `ip link set` then executes the original entrypoint.
 You can run this kind of script by adding an `entrypoint` option in `docker-compose.yaml`.
 
 ## Conclusion
@@ -515,4 +516,4 @@ I hope this tutorial will help you with your usage of Docker Compose.
 Docker Compose is a great tool for network engineering,
 even if it might be difficult to use the first times.
 
-Code used in this blog article is available on Github with the repository [louisroyer/blog-docker-compose-for-network-simulations](https://github.com/louisroyer/blog-docker-compose-for-network-simulations).
+The code used in this blog post is available on Github in the repository [louisroyer/blog-docker-compose-for-network-simulations](https://github.com/louisroyer/blog-docker-compose-for-network-simulations).

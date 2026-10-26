@@ -1,6 +1,6 @@
+---
 title: "Louis Royer’s blog"
-copyright: "CC-0 1.0"
-show_excerpts: true
+copyright: "CC0-1.0"
 url: "https://louisroyer.github.io"
 description: >
   Personal blog
@@ -9,16 +9,21 @@ author:
   name: "Louis Royer"
   email: "infos.louis.royer@gmail.com"
 minima:
-  skin: auto
+  show_excerpts: true
+  skin: "auto"
   date_format: "%Y-%m-%d"
   social_links:
-    github: "louisroyer"
+    - title: "Github"
+      icon: "github"
+      url: "https://github.com/louisroyer"
+    - title: "ORCID"
+      icon: "orcid"
+      url: "https://orcid.org/0009-0008-4492-2804"
 feed:
   categories:
-    - tutorial
+    - "tutorial"
 plugins:
   - "jekyll-feed"
   - "jekyll-sitemap"
   - "jekyll-remote-theme"
-remote_theme: "jekyll/minima@7f4b79da7e72b0b564b769ffd2ee4809bb387f0c"
-
+remote_theme: "jekyll/minima@4de322363fca5927e6f4012cb94f6dad69ab5e6c"
